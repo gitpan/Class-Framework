@@ -5,7 +5,7 @@ use strict;
 use Class::Accessor ();
 use Class::MethodVars ();
 
-our $VERSION = '1.'.qw $Rev: 115 $[1];
+our $VERSION = '1.'.qw $Rev: 228 $[1];
 
 sub insert_base($$) {
 	my ($package,$base) = @_;
@@ -125,6 +125,7 @@ Because this is inherited from Class::Framework::New you can create your own new
 =head1 SEE ALSO
 
 See L<Class::MethodVars> for the parameters on the use line. All options except -base are passed through to that module.
+See L<Class::Accessor> used by this module.
 
 =head1 AUTHOR
 

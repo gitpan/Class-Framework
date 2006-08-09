@@ -9,5 +9,4 @@ t/demotest.pl
 t/evaltest.pl
 t/PTest.pm
 t/PTest2.pm
-TODO
 META.yml                                 Module meta-data (added by MakeMaker)

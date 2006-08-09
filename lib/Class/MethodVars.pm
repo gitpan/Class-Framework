@@ -4,7 +4,7 @@ use strict;
 
 use NEXT;
 
-our $VERSION = '1.'.qw $Rev: 116 $[1];
+our $VERSION = '1.'.qw $Rev: 133 $[1];
 
 our %Configs; # Needs to be accessible to Class::Framework
 my %OptionsMap = (
@@ -559,7 +559,7 @@ Fields and Options are defined on the use line in the following fashion:
 
 Either @fieldlist or @optionlist may be empty (in which case the separating comma may be dropped too).
 
-Fields can also be specified via the -fields option. @fieldlist can also be expressed as an array reference (eg [@fieldlist]).
+Fields can also be specified via one of the -*fields options. @fieldlist can also be expressed as an array reference (eg [@fieldlist]).
 
 =head1 OPTIONS WITH PARAMETERS
 
