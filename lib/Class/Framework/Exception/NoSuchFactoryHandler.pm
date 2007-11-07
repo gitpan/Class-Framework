@@ -1,13 +1,38 @@
-package Class::Framework;
+package Class::Framework::Exception::NoSuchFactoryHandler;
 
-use strict;
+# $Id: NoSuchHandler.pm 13644 2007-10-18 21:27:45Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Exception';
+
+
+__PACKAGE__->mk_accessors(qw(handler_type spec));
+
+
+use constant default_message =>
+    'Factory lookup failure for handler type [%s], spec [%s]';
+
+use constant PROPERTIES => ( qw/handler_type spec/ );
+
+
+sub init {
+    my $self = shift;
+
+    # because we call SUPER::init(), which uses caller() to set
+    # package, filename and line of the exception, *plus* we don't want
+    # to report the abstract method that threw this exception itself,
+    # rather we want to report its caller, i.e. the one that called the
+    # abstract method. So we use +2.
+
+    local $Error::Depth = $Error::Depth + 2;
+    $self->SUPER::init(@_);
+}
 
 
 1;

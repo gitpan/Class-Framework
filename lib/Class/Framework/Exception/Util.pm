@@ -1,13 +1,34 @@
-package Class::Framework;
+package Class::Framework::Exception::Util;
+
+# $Id: Util.pm 13653 2007-10-22 09:11:20Z gr $
 
 use strict;
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use Error::Hierarchy::Util 'assert_class';
 
 
 our $VERSION = '0.01';
+
+
+use base 'Exporter';
+
+
+our %EXPORT_TAGS = (
+    misc => [ qw{assert_object_type} ],
+);
+
+our @EXPORT_OK = @{ $EXPORT_TAGS{all} = [ map { @$_ } values %EXPORT_TAGS ] };
+
+
+# pass an OBJ_* constant to this method
+
+sub assert_object_type ($$) {
+    my ($obj, $object_type_const) = @_;
+    local $Error::Depth = $Error::Depth + 1;
+    assert_class($obj, Class::Framework::Environment->getenv->
+        get_class_name_for($object_type_const)
+    );
+}
 
 
 1;

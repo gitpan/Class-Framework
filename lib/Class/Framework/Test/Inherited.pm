@@ -1,13 +1,24 @@
-package Class::Framework;
+package Class::Framework::Test::Inherited;
 
-use strict;
+# $Id: Inherited.pm 11614 2006-06-10 19:34:28Z rts $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Base';
+
+
+sub INHERITED_TEST_CLASSES { () }
+
+
+sub get_inherited_test_classes {
+    my $self = shift;
+    $self->every_list('INHERITED_TEST_CLASSES');
+}
 
 
 1;

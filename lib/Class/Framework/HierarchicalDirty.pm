@@ -1,13 +1,60 @@
-package Class::Framework;
+package Class::Framework::HierarchicalDirty;
 
 use strict;
 use warnings;
 
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+# $Id: HierarchicalDirty.pm 13653 2007-10-22 09:11:20Z gr $
+#
+# Mixin that multiplexes the dirty flag among its subobjects using
+# Class::Accessor::FactoryTyped's introspection support
 
 
 our $VERSION = '0.01';
+
+
+sub dirty {
+    my $self = shift;
+
+    for my $attr (Class::Framework::Accessor->factory_typed_accessors) {
+        return 1 if $self->$attr->dirty;
+    }
+
+    for my $attr (Class::Framework::Accessor->factory_typed_array_accessors) {
+        for my $element ($self->$attr) {
+            return 1 if $element->dirty;
+        }
+    }
+
+    return 0;
+}
+
+
+sub set_dirty {
+    my $self = shift;
+
+    $self->$_->set_dirty for
+        Class::Framework::Accessor->factory_typed_accessors;
+
+    for my $attr (Class::Framework::Accessor->factory_typed_array_accessors) {
+        for my $element ($self->$attr) {
+            $element->set_dirty;
+        }
+    }
+}
+
+
+sub clear_dirty {
+    my $self = shift;
+
+    $self->$_->clear_dirty for
+        Class::Framework::Accessor->factory_typed_accessors;
+
+    for my $attr (Class::Framework::Accessor->factory_typed_array_accessors) {
+        for my $element ($self->$attr) {
+            $element->clear_dirty;
+        }
+    }
+}
 
 
 1;

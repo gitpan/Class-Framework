@@ -1,13 +1,47 @@
-package Class::Framework;
+package Class::Framework::Context;
+
+# $Id: Charset.pm 9275 2005-06-21 13:58:39Z gr $
 
 use strict;
 use warnings;
 
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
-
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Base';
+
+
+__PACKAGE__->mk_scalar_accessors(qw(execution job));
+
+
+# types of execution context: cron, apache, shell, soap
+# types of job context: mail, sif, epp
+
+# takes something like 'run/epp' and sets execution and job context
+
+sub parse_context {
+    my ($self, $spec) = @_;
+    if ($spec =~ m!^(\w+)/(\w+)$!) {
+        my ($job, $execution) = ($1, $2);
+        $self->execution($execution);
+        $self->job($job);
+    } else {
+        throw Error::Hierarchy::Internal::CustomMessage(
+            custom_message => "Invalid context specification [$spec]",
+        );
+    }
+
+    $self;
+}
+
+
+sub as_string {
+    my $self = shift;
+    sprintf '%s/%s',
+        (defined $self->job ? $self->job : 'none'),
+        (defined $self->execution ? $self->execution : 'none');
+}
 
 
 1;

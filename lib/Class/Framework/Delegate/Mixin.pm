@@ -1,13 +1,30 @@
-package Class::Framework;
+package Class::Framework::Delegate::Mixin;
 
-use strict;
+# $Id: Mixin.pm 9981 2005-07-27 06:52:47Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+sub delegate {
+    # Class::Framework::Base inherits from this mixin, so we shouldn't use()
+    # Class::Framework::Environment, which inherits from
+    # Class::Framework::Base, creating redefined() warnings. So we just
+    # require() it here.
+
+    my $self = shift;
+    if (@_) {
+        throw Error::Hierarchy::Internal::CustomMessage(
+            custom_message => 'delegate() is read-only'
+        );
+    }
+
+    require Class::Framework::Environment;
+    Class::Framework::Environment->getenv
+}
 
 
 1;

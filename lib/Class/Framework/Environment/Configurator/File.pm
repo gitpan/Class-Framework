@@ -1,13 +1,50 @@
-package Class::Framework;
+package Class::Framework::Environment::Configurator::File;
 
-use strict;
+# $Id: File.pm 13653 2007-10-22 09:11:20Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use File::Basename;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Environment::Configurator::Base';
+
+
+__PACKAGE__
+    ->mk_hash_accessors(qw(opt))
+    ->mk_scalar_accessors(qw(filename));
+
+
+sub init {
+    my $self = shift;
+    $self->SUPER::init(@_);
+
+    if (my $conf_file = $self->filename) {
+        # replace dollar-variables with their environment equivalent; also
+        # some special definitions
+
+        open my $fh, '<', $conf_file or die "can't open $conf_file: $!\n";
+        my $yaml = do { local $/; <$fh> };
+        close $fh or die "can't close $conf_file: $!\n";
+
+        $ENV{SELF} = dirname($self->filename);
+        $yaml =~ s/\$(\w+)/$ENV{$1} || "\$$1"/ge;
+
+        require YAML;
+        $self->opt(YAML::Load($yaml));
+    }
+}
+
+
+# assume conf values are just top-level keys in the options hash
+sub AUTOLOAD {
+    my $self = shift;
+    (my $method = our $AUTOLOAD) =~ s/.*://;
+    $self->opt->{$method}
+}
 
 
 1;

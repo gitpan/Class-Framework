@@ -1,13 +1,40 @@
-package Class::Framework;
+package Class::Framework::YAML::Active::ExceptionContainer;
 
-use strict;
+# $Id: ExceptionContainer.pm 13653 2007-10-22 09:11:20Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use YAML::Active qw/assert_arrayref array_activate/;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::YAML::Active';
+
+
+sub yaml_activate {
+    my ($self, $phase) = @_;
+    assert_arrayref($self);
+    my $exceptions = array_activate($self, $phase);
+
+    # Expect a list of hashrefs; each hash element is an exception with a
+    # 'ref' key giving the exception class, and the rest being treated as args
+    # to give to the exception when it is being recorded. Example:
+    #
+    #  exception_container: !perl/Class::Framework::YAML::Active::ExceptionContainer
+    #    - ref: Class::Framework::Exception::Policy::Blah
+    #      property1: value1
+    #      property2: value2
+
+    my $container = $self->delegate->make_obj('exception_container');
+    for my $exception (@$exceptions) {
+        my $class = $exception->{ref};
+        delete $exception->{ref};
+        $container->record($class, %$exception);
+    }
+    $container;
+}
 
 
 1;

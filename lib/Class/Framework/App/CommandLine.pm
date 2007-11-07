@@ -1,13 +1,65 @@
-package Class::Framework;
+package Class::Framework::App::CommandLine;
 
 use strict;
 use warnings;
+use Class::Framework::Environment;
+use Class::Framework::Environment::Configurator;
 
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use Getopt::Long;
+Getopt::Long::Configure('no_ignore_case');
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::App';
+
+
+__PACKAGE__->mk_hash_accessors(qw(opt));
+
+
+use constant CONTEXT => 'generic/shell';
+
+# alias logfile to log so that when can use '--log', but it gets stored in
+# '{logfile}', which is what Class::Framework::App expects
+
+use constant GETOPT => (qw/
+    help man logfile|log=s verbose|v+ dryrun conf=s version|V environment
+/);
+
+
+sub usage {
+    my $self = shift;
+    require Pod::Usage;
+    Pod::Usage::pod2usage(@_);
+}
+
+
+sub app_init {
+    my $self = shift;
+    my %opt;
+
+    GetOptions(\%opt, $self->every_list('GETOPT')) or usage(2);
+
+    usage(1) if $opt{help};
+    usage(-exitstatus => 0, -verbose => 2) if $opt{man};
+
+    # Add the getopt configurator before the superclass has a chance to add
+    # the file configurator; this way, getopt definitions take precedence over
+    # what's in the conf file.
+
+    Class::Framework::Environment::Configurator->instance->
+        add_configurator(getopt => \%opt);
+    $self->opt(%opt);
+
+    $self->SUPER::app_init(@_);
+}
+
+
+sub app_finish {
+    my $self = shift;
+    $self->delegate->disconnect;
+}
 
 
 1;

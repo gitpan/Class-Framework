@@ -1,0 +1,128 @@
+#!/usr/bin/env perl
+
+# $Id: cf_dumpenv 11254 2006-04-25 11:43:10Z gr $
+#
+# Examples:
+#
+#   cf_dumpenv Class--Framework--Environment
+#
+# dumps GENERAL_CLASS_NAME_HASH
+#
+#   cf_dumpenv -h TT /path/to/My/Subclassed/Environment.pm
+#
+# dumps TT_HASH
+
+use warnings;
+use strict;
+use Getopt::Long;
+use Project::Build::Util 'ptag_find';
+
+
+our $VERSION = '0.01';
+
+
+my $wanted_hash;
+
+GetOptions(
+    'hash|h=s' => \$wanted_hash,
+);
+
+my $class_file = shift;
+$wanted_hash = 'GENERAL_CLASS_NAME' unless defined $wanted_hash;
+
+unless (-f $class_file) {
+    my $ptag = ptag_find($class_file);
+    if (defined $ptag) {
+        $class_file = $ptag
+    } else {
+        die "[$class_file] is neither a file nor a ptag\n";
+    }
+}
+
+require $class_file;
+die $@ if $@;
+
+# class_file is the actual file path; it could also come from a tag. Now we
+# need to know which class is defined in that file so we can instantiate it.
+
+my $class;
+open my $fh, $class_file or die "can't open $class_file: $!\n";
+while (<$fh>) {
+    next unless /^\s*package\s+(\w+(::\w+)*)\s*;/o;
+    $class = $1;
+    last;
+}
+close $fh or die "can't close $class_file: $!\n";
+
+die "$class_file did not define a package" unless defined $class;
+
+die "$class is not an environment class\n" unless
+    UNIVERSAL::isa($class, 'Class::Framework::Environment');
+
+my $env = $class->new;
+my %hash = $env->every_hash($wanted_hash . "_HASH");
+
+for my $key (sort keys %hash) {
+    printf "%s: %s\n", $key, $hash{$key};
+}
+
+
+__END__
+
+=head1 NAME
+
+Class::Framework - large-scale OOP application support
+
+=head1 SYNOPSIS
+
+None yet (see below).
+
+=head1 DESCRIPTION
+
+None yet. This is an early release; fully functional, but undocumented. The
+next release will have more documentation.
+
+=head1 TAGS
+
+If you talk about this module in blogs, on del.icio.us or anywhere else,
+please use the C<classframework> tag.
+
+=head1 BUGS AND LIMITATIONS
+
+No bugs have been reported.
+
+Please report any bugs or feature requests to
+C<bug-class-framework@rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org>.
+
+=head1 INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
+
+=head1 AVAILABILITY
+
+The latest version of this module is available from the Comprehensive Perl
+Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a CPAN
+site near you. Or see <http://www.perl.com/CPAN/authors/id/M/MA/MARCEL/>.
+
+=head1 AUTHORS
+
+Marcel GrE<uuml>nauer, C<< <marcel@cpan.org> >>
+
+Florian Helmberger C<< <fh@univie.ac.at> >>
+
+Achim Adam C<< <ac@univie.ac.at> >>
+
+Mark Hofstetter C<< <mh@univie.ac.at> >>
+
+Heinz Ekker C<< <ek@univie.ac.at> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2007 by Marcel GrE<uuml>nauer
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+

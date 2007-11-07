@@ -1,13 +1,60 @@
-package Class::Framework;
+package Class::Framework::Accessor;
 
-use strict;
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use Error::Hierarchy::Util 'assert_read_only';
+use Class::Framework::Factory::Type;
 
 
 our $VERSION = '0.01';
+
+
+use base qw(
+    Class::Accessor::Complex
+    Class::Accessor::Constructor
+    Class::Accessor::FactoryTyped
+);
+
+
+sub mk_framework_object_accessors {
+    my ($self, @args) = @_;
+    $self->mk_factory_typed_accessors(
+        'Class::Framework::Factory::Type', @args);
+}
+
+
+sub mk_framework_object_array_accessors {
+    my ($self, @args) = @_;
+    $self->mk_factory_typed_array_accessors(
+        'Class::Framework::Factory::Type', @args);
+}
+
+
+sub mk_readonly_accessors {
+    my ($self, @fields) = @_;
+    my $class = ref $self || $self;
+
+    for my $field (@fields) {
+        no strict 'refs';
+
+        *{"${class}::${field}"} = sub {
+            local $DB::sub = local *__ANON__ = "${class}::${field}"
+                if defined &DB::DB && !$Devel::DProf::VERSION;
+            my $self = shift;
+            assert_read_only(@_);
+            $self->{$field};
+        };
+
+        *{"${class}::set_${field}"} =
+        *{"${class}::${field}_set"} = sub {
+            local $DB::sub = local *__ANON__ = "${class}::${field}_set"
+                if defined &DB::DB && !$Devel::DProf::VERSION;
+            $_[0]->{$field} = $_[1];
+        };
+    }
+
+    $self;  # for chaining
+}
 
 
 1;

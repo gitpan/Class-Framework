@@ -1,13 +1,20 @@
-package Class::Framework;
+package Class::Framework::YAML::Active::Hash;
 
-use strict;
+# $Id: Hash.pm 9206 2005-06-15 14:07:06Z rts $
+
+# Base class for YAML::Active plugins
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base qw(
+    Class::Framework::Storable
+    YAML::Active::Plugin::Hash
+);
 
 
 1;

@@ -1,13 +1,27 @@
-package Class::Framework;
+package Class::Framework::YAML::Active::Exception;
 
-use strict;
+# $Id: Exception.pm 9206 2005-06-15 14:07:06Z rts $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use YAML::Active qw/assert_hashref hash_activate/;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::YAML::Active';
+
+
+sub yaml_activate {
+    my ($self, $phase) = @_;
+    assert_hashref($self);
+    my $hash = hash_activate($self, $phase);
+
+    { ref     => $hash->{type},
+      message => $hash->{type}->record(%{ $hash->{attr} }),
+    };
+}
 
 
 1;

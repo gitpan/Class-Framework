@@ -1,13 +1,30 @@
-package Class::Framework;
+package Class::Framework::Environment_TEST;
 
-use strict;
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use Error::Hierarchy::Test 'throws2_ok';
+use Test::More;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Test';
+
+
+use constant PLAN => 1;
+
+
+sub run {
+    my $self = shift;
+    $self->SUPER::run(@_);
+
+    throws2_ok { $self->delegate->make_obj(foobar => 'abc') }
+        'Error::Hierarchy::Internal::CustomMessage',
+        qr/Factory type 'foobar' is not defined/,
+        'trying to make an object of an unknown object type';
+
+}
 
 
 1;

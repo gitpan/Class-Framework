@@ -1,13 +1,17 @@
-package Class::Framework;
+package Class::Framework::Factory::Type;
 
-use strict;
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Factory::Enhanced';
+
+
+# no warnings
+sub factory_log {}
 
 
 1;

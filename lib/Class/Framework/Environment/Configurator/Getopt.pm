@@ -1,13 +1,25 @@
-package Class::Framework;
+package Class::Framework::Environment::Configurator::Getopt;
 
-use strict;
+# $Id: Getopt.pm 13653 2007-10-22 09:11:20Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Environment::Configurator::Base';
+
+
+__PACKAGE__->mk_hash_accessors(qw(opt));
+
+
+sub AUTOLOAD {
+    my $self = shift;
+    (my $method = our $AUTOLOAD) =~ s/.*://;
+    $self->opt->{$method};
+}
 
 
 1;

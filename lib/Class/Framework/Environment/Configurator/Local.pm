@@ -1,13 +1,26 @@
-package Class::Framework;
+package Class::Framework::Environment::Configurator::Local;
 
-use strict;
+# $Id: Local.pm 9987 2005-07-27 13:37:58Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Environment::Configurator::Base';
+
+
+our %opt;    # so it can be overridden via local()
+
+
+sub AUTOLOAD {
+    my $self = shift;
+    (my $method = our $AUTOLOAD) =~ s/.*://;
+    our %opt;
+    $opt{$method};
+}
 
 
 1;

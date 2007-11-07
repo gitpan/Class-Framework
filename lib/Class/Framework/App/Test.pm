@@ -1,13 +1,26 @@
-package Class::Framework;
+package Class::Framework::App::Test;
 
 use strict;
 use warnings;
 
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
-
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::App::CommandLine';
+
+
+sub app_code {
+    my $self = shift;
+    $self->SUPER::app_code(@_);
+    $self->delegate->set_rollback_mode;
+    $self->delegate->test_mode(1);
+
+    # We're not going through Environment's make_obj(), so we have
+    # to connect manually.
+
+    $self->delegate->core_storage->test_setup;
+}
 
 
 1;

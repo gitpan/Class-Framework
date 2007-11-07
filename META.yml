@@ -1,13 +1,41 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Class-Framework
-version:      1.228
-version_from: lib/Class/Framework.pm
-installdirs:  site
-requires:
-    Class::Accessor:               0
-    fields:                        0
-    NEXT:                          0
-
+--- 
+abstract: large-scale OOP application support
+author: 
+  - Marcel GrE<uuml>nauer, C<< <marcel@cpan.org> >>
+build_requires: 
+  Test::CompanionClasses: 0
+  Test::Compile: 0
+  Test::More: 0
+  UNIVERSAL::require: 0
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.30
+generated_by: Module::Install version 0.68
+license: perl
+meta-spec: 
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
+name: Class-Framework
+no_index: 
+  directory: 
+    - inc
+    - t
+requires: 
+  Class::Accessor::Complex: 0
+  Class::Accessor::Constructor: 0
+  Class::Accessor::FactoryTyped: 0
+  Class::Factory::Enhanced: 0
+  Class::Value: 0
+  DBI: 0
+  Data::Comparable: 0
+  Data::Inherited: 0
+  Data::Miscellany: 0
+  Error::Hierarchy: 0
+  String::FlexMatch: 0
+  Term::Shell::Enhanced: 0
+  Test::Differences: 0
+  Test::More: 0
+  Text::Table: 0
+  Time::HiRes: 0
+  YAML: 0
+  YAML::Active: 0
+  perl: 5.6.0
+version: 0.01

@@ -1,13 +1,24 @@
-package Class::Framework;
+package Class::Framework::Exception::Loader;
 
-use strict;
+# $Id: Loader.pm 13653 2007-10-22 09:11:20Z gr $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base qw(Error::Hierarchy::Internal Class::Framework::Accessor);
+
+
+__PACKAGE__->mk_scalar_accessors(qw(class origin message));
+
+
+use constant default_message => "Can't load [%s], (%s) %s";
+
+
+sub properties { $_[0]->SUPER::properties, qw/class origin message/ }
 
 
 1;

@@ -1,13 +1,26 @@
-package Class::Framework;
+package Class::Framework::Exception::Container;
+
+# $Id: Container.pm 9275 2005-06-21 13:58:39Z gr $
+
+# implements a container object.
 
 use strict;
 use warnings;
 
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
-
 
 our $VERSION = '0.01';
+
+
+# It's ok to inherit from Class::Framework::Storable as well; new() will be
+# found in Error::Hierarchy first. For the exception class itself, to inherit
+# from Class::Framework::Base would be enough, but there might be subclasses
+# that need the 'storage' accessor - Class::Framework::Exception::Container, for
+# example.
+
+use base qw(
+    Error::Hierarchy::Container
+    Class::Framework::Storable
+);
 
 
 1;

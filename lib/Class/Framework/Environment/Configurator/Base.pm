@@ -1,13 +1,28 @@
-package Class::Framework;
+package Class::Framework::Environment::Configurator::Base;
 
-use strict;
+# $Id: Base.pm 13292 2007-07-02 11:33:23Z gr $
+#
+# Base class for environment configurators
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Base';
+
+
+# Define functions and class methods lest they be handled by AUTOLOAD.
+
+sub DEFAULTS { () }
+sub DESTROY {}
+
+# Each configurator should answer any call, so return undef for all options
+# unknown to this configurator.
+
+sub AUTOLOAD {}
 
 
 1;

@@ -1,13 +1,39 @@
-package Class::Framework;
+package Class::Framework::Storable_TEST;
+
+# $Id: Storable_TEST.pm 11275 2006-04-26 10:53:05Z gr $
 
 use strict;
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use Error::Hierarchy::Test 'throws2_ok';
+use Test::More;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Test';
+
+
+use constant PLAN => 1;
+
+
+sub run {
+    my $self = shift;
+    $self->SUPER::run(@_);
+
+    my $obj = $self->make_real_object;
+
+    throws2_ok {
+        Class::Framework::Storable_TEST::x001->new->storage->prepare('foo');
+    } 'Error::Hierarchy::Internal::CustomMessage',
+       qr/can't find method to get storage object from delegate/,
+       'using non-existing storage';
+
+}
+
+
+package Class::Framework::Storable_TEST::x001;
+use base 'Class::Framework::Storable';
 
 
 1;

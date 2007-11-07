@@ -1,13 +1,30 @@
-package Class::Framework;
+package Class::Framework::YAML::Active::Environment;
 
-use strict;
+# $Id: Environment.pm 9206 2005-06-15 14:07:06Z rts $
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use Class::Framework::Environment;
+use YAML::Active qw/assert_hashref hash_activate yaml_NULL/;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::YAML::Active';
+
+
+sub yaml_activate {
+    my ($self, $phase) = @_;
+    assert_hashref($self);
+    my $hash = hash_activate($self, $phase);
+
+    my $env = Class::Framework::Environment->getenv;
+    while (my ($key, $value) = each %$hash) {
+        $env->{$key} = $value;
+    }
+    yaml_NULL();
+}
 
 
 1;

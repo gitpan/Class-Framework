@@ -1,13 +1,40 @@
-package Class::Framework;
+package Class::Framework::App::Test::Classes;
 
-use strict;
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
+use FindBin '$Bin';
+use Test::More;
+use Test::CompanionClasses::Engine;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::App::Test';
+
+
+__PACKAGE__
+    ->mk_array_accessors(qw(inherited))
+    ->mk_scalar_accessors(qw(lib));
+
+
+use constant DEFAULTS => (
+    lib => "$Bin/../lib",   # two levels, we live in t/embedded/
+);
+
+use constant GETOPT => ('exact');
+
+
+sub app_code {
+    my $self = shift;
+    $self->SUPER::app_code(@_);
+    Test::CompanionClasses::Engine->new->run_tests(
+        exact     => $self->opt->{exact},
+        lib       => $self->lib,
+        filter    => [ @ARGV ],
+        inherited => [ $self->inherited ],
+    );
+}
 
 
 1;

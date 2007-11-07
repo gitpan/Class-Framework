@@ -1,13 +1,18 @@
-package Class::Framework;
+package Class::Framework::Exception::Business;
 
-use strict;
+# $Id: Business.pm 9206 2005-06-15 14:07:06Z rts $
+
+# Marker class to differentiate business exceptions from internal
+# exceptions.
+
 use warnings;
-
-# Marker package so sub-distros can use it in their Build.PL's 'requires'
-# section.
+use strict;
 
 
 our $VERSION = '0.01';
+
+
+use base 'Class::Framework::Exception';
 
 
 1;
